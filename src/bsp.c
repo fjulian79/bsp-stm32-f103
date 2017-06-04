@@ -9,13 +9,20 @@
 
 #include "libopencm3/stm32/rcc.h"
 
-void bspClockSetup(void)
+void bspClockSetup(bspHSEBypass_t bypass, bspCpuSpeed_t speed)
 {
-    /*
-     * We want to use full speed .. check that the clock from the st-link
-     * is provided to the mcu.
-     * */
-    rcc_osc_off(RCC_HSE);
-    rcc_osc_bypass_enable(RCC_HSE);
-    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+    if (bypass == BSP_HSE_BYPASS_ON)
+    {
+        rcc_osc_off(RCC_HSE);
+        rcc_osc_bypass_enable(RCC_HSE);
+    }
+
+    if (speed == BSP_CPU_SPEED_24MHZ)
+    {
+        rcc_clock_setup_in_hse_8mhz_out_24mhz();
+    }
+    else
+    {
+        rcc_clock_setup_in_hse_8mhz_out_72mhz();
+    }
 }

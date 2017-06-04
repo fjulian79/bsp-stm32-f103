@@ -4,7 +4,7 @@ DEPENDS     = libopencm3
 SRCEXT      ?= c
 DEFS        =
 WARN_FLAGS  = -Wall
-INCLUDE     = /include
+INCLUDE     = $(SRCDIR)/include
 OPT         = -Og
 EXPORT      = /include/bsp
 

@@ -14,58 +14,93 @@
 extern "C" {
 #endif
 
+#include <bsp_config.h>
+
+#ifndef BSP_ENABLED
+
 /**
- *
+ * Default enabled definition in the bsp.
  */
 #define BSP_ENABLED                     1
-#define BSP_DISABLED                    0
+
+#endif /* BSP_ENABLED */
+
+#ifndef BSP_DISABLED
 
 /**
- * If enabled bsp_assert.h will implement assertions.
+ * Default disabled definition in the bsp.
  */
-#define BSP_DOASSERT                    BSP_ENABLED
+#define BSP_DISABLED                    0
 
-/*
- * User LED configuration
- * */
-#define BSP_LED_RCC                     RCC_GPIOA
-#define BSP_LED_PORT                    GPIOA
-#define BSP_LED_PIN                     GPIO5
+#endif /* BSP_DISABLE*/
 
-/*
- * Button configuration
- * */
-#define BSP_BUTTON_RCC                  RCC_GPIOC
-#define BSP_BUTTON_PORT                 GPIOC
-#define BSP_BUTTON_PIN                  GPIO13
+#ifndef BSP_TTY_DMA_MODE
 
+/**
+ * Default TTY DMA mode.
+ */
+#define BSP_TTY_DMA_MODE                BSP_ENABLED
 
-/*
- * TTY configuration
- * */
+#endif /* BSP_TTY_DMA_MODE*/
+
+#ifndef BSP_TTY_BUFFERSIZE
+
+/**
+ * Default TTY DMA FIFO size.
+ */
+#define BSP_TTY_BUFFERSIZE              160
+
+#endif /* BSP_TTY_BUFFERSIZE*/
+
+#ifndef BSP_TTY_BLOCKING
+
+/**
+ * Default TTY blocking mode.
+ */
+#define BSP_TTY_BLOCKING                BSP_ENABLED
+
+#endif /* BSP_TTY_BLOCKING*/
+
+/**
+ * GPIO definitions used in the BSP.
+ *
+ * The BSP will define all GPIO's within a enumeration type called bspGpioPin_t
+ * in the following way BSP_GPIO_<PORT><PIN>. Here those names can be replaced
+ * by redefining them to define special function pins for led's, button's and
+ * special io busses, etc.
+ *
+ * User definitions shall be defined within bsp_config.h.
+ */
+
+/**
+ * The TTY is seen as mandatory for all projects and therefore the needed gpio
+ * pins are defined here.
+ */
+#define BSP_GPIO_A2                     BSP_GPIO_TTYTX
+#define BSP_GPIO_A3                     BSP_GPIO_TTYRX
+
+/**
+ * TTY definitions
+ */
 #define BSP_TTY_USART_RCC               RCC_USART2
 #define BSP_TTY_USART                   USART2
-#define BSP_TTY_GPIO_RCC                RCC_GPIOA
-#define BSP_TTY_GPIO_PORT               GPIOA
-#define BSP_TTY_GPIO_TXPIN              GPIO_USART2_TX
-#define BSP_TTY_GPIO_RXPIN              GPIO_USART2_RX
 
-#define BSP_TTY_DMA_MODE                BSP_ENABLED
-#define BSP_TTY_DMA                     DMA1
-#define BSP_TTY_DMA_CH                  DMA_CHANNEL7
-
-/*
- * DMA configuration
- * */
+/**
+ * DMA channel definitions
+ */
 #define BSP_DMACH_USART0TX              0
 #define BSP_DMACH_NUMBEROF              1
 
+/**
+ * Interrupt definitions. Check the Cortex-M3 programming guide for details if
+ * needed.
+ */
 
 #ifndef __NVIC_PRIO_BITS
-/*
+/**
  * __NVIC_PRIO_BITS should be specified when CMSIS is being used.
  * 7 priority levels as default if the definition is not available.
- * */
+ */
 #define __NVIC_PRIO_BITS                3
 #endif
 

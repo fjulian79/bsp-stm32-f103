@@ -1,6 +1,6 @@
 BINARY      = libbsp
 COMPATIBLE  = stm32f103rb
-DEPENDS     = libopencm3
+DEPENDS     = libopencm3 libcli
 SRCEXT      ?= c
 DEFS        =
 WARN_FLAGS  = -Wall

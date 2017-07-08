@@ -17,7 +17,6 @@ void fifoInit(fifo_t * f, char * buf, size_t size)
 	f->siz = size;
 	f->head = 0;
     f->tail = 0;
-    f->used = 0;
 }
 
 size_t fifoGetSize(fifo_t *f)
@@ -39,10 +38,8 @@ size_t fifoGetUsed(fifo_t * f)
 
 size_t fifoGetFree(fifo_t * f)
 {
-	size_t free = f->siz - fifoGetUsed(f);
-	return free-1;
+	return f->siz - fifoGetUsed(f) - 1;
 }
-
 
 size_t fifoWrite(fifo_t * f, const void *buf, size_t siz)
 {
@@ -68,7 +65,6 @@ size_t fifoWrite(fifo_t * f, const void *buf, size_t siz)
 	out:
 	return siz + tmp;
 }
-
 
 size_t fifoPut(fifo_t * f, const void *c)
 {
@@ -102,14 +98,12 @@ size_t fifoRead(fifo_t * f, void *buf, size_t siz)
 	{
 		tmp = f->siz - f->tail;
 		memcpy(buf, (const void*) &f->pData[f->tail], tmp);
-		memset(&f->pData[f->tail], 0, tmp);
 		siz -= tmp;
 		buf += tmp;
 		f->tail = 0;
 	}
 
 	memcpy(buf, (const void*) &f->pData[f->tail], siz);
-	memset(&f->pData[f->tail], 0, siz);
 	f->tail += siz;
 
 	if (f->tail == f->head)
@@ -147,7 +141,7 @@ void fifoFree(fifo_t *f, size_t siz)
 	if (used == 0)
 		return;
 
-	if (f->tail + used > f->siz)
+	if ((f->tail + used) >= f->siz)
 	{
 		used -= f->siz - f->tail;
 		f->tail = 0;

@@ -6,40 +6,42 @@
  */
 
 #include "bsp/bsp.h"
+#include "bsp/bsp_gpio.h"
 #include "bsp/bsp_usart.h"
-
-#include "fifo.h"
-
 #include "mybuildroot/common.h"
 
-#include "libopencm3/stm32/rcc.h"
-#include "libopencm3/stm32/gpio.h"
-#include "libopencm3/stm32/usart.h"
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/dma.h>
 #include <libopencm3/cm3/nvic.h>
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <errno.h>
 
 #if BSP_TTY_DMA_MODE == BSP_ENABLED
 
+#include "fifo.h"
+
 typedef struct
 {
-    char fifoData[160];
-    size_t TxBytes;
+    char Data[BSP_TTY_BUFFERSIZE];
+    volatile size_t TxBytes;
     uint32_t lostBytes;
 
 }ttyData_t;
 
 ttyData_t ttyData;
 
-fifo_t fifo = FIFO_INIT;
+fifo_t ttyFifo = FIFO_INIT;
 
-#endif
+#endif /* BSP_TTY_DMA_MODE == BSP_ENABLED */
 
-int _write(int file, char *ptr, int len)
+int _write(int file, char *pData, int siz)
 {
-    int i = 0;
+    volatile int tmp = 0;
+    char *ptr = NULL;
 
     if (file == 1)
     {
@@ -48,12 +50,14 @@ int _write(int file, char *ptr, int len)
 
         nvic_disable_irq(NVIC_DMA1_CHANNEL7_IRQ);
 
-        i = fifoPut(&fifo, ptr);
+        if (siz == 1)
+            tmp = fifoPut(&ttyFifo, pData);
+        else
+            tmp = fifoWrite(&ttyFifo, pData, siz);
 
         if (ttyData.TxBytes == 0)
         {
-            ttyData.TxBytes = fifoGetReadBlock(&fifo, (void**)&ptr);
-
+            ttyData.TxBytes = fifoGetReadBlock(&ttyFifo, (void**)&ptr);
             dma_set_memory_address(DMA1, DMA_CHANNEL7, (uint32_t)ptr);
             dma_set_number_of_data(DMA1, DMA_CHANNEL7, ttyData.TxBytes);
             dma_enable_channel(DMA1, DMA_CHANNEL7);
@@ -62,12 +66,26 @@ int _write(int file, char *ptr, int len)
 
         nvic_enable_irq(NVIC_DMA1_CHANNEL7_IRQ);
 
-#else
-        for (i = 0; i < len; i++)
-            usart_send_blocking(BSP_TTY_USART, ptr[i]);
-#endif
+#if BSP_TTY_BLOCKING == BSP_ENABLED
 
-        return i;
+        while (fifoGetFree(&ttyFifo) == 0 && (tmp < siz));
+        return tmp;
+
+#else /* BSP_TTY_BLOCKING == BSP_ENABLED */
+
+        return siz;
+
+#endif /* BSP_TTY_BLOCKING == BSP_ENABLED */
+
+#else /* BSP_TTY_DMA_MODE == BSP_ENABLED */
+
+        for (tmp = 0; tmp < siz; tmp++)
+            usart_send_blocking(BSP_TTY_USART, pDate[tmp]);
+
+        return tmp;
+
+#endif /* BSP_TTY_DMA_MODE == BSP_ENABLED */
+
     }
 
     errno = EIO;
@@ -88,8 +106,8 @@ void dma1_channel7_isr(void)
     usart_disable_tx_dma(BSP_TTY_USART);
     dma_disable_channel(DMA1, DMA_CHANNEL7);
 
-    fifoFree(&fifo, ttyData.TxBytes);
-    ttyData.TxBytes = fifoGetReadBlock(&fifo, (void**)&ptr);
+    fifoFree(&ttyFifo, ttyData.TxBytes);
+    ttyData.TxBytes = fifoGetReadBlock(&ttyFifo, (void**)&ptr);
 
     if (ttyData.TxBytes != 0)
     {
@@ -100,7 +118,7 @@ void dma1_channel7_isr(void)
     }
 }
 
-#endif
+#endif /* BSP_TTY_DMA_MODE == BSP_ENABLED */
 
 int _read(int file, char *ptr, int len)
 {
@@ -112,21 +130,15 @@ int _read(int file, char *ptr, int len)
     return -1;
 }
 
-
 void bspTTYInit(uint32_t baud)
 {
     rcc_periph_clock_enable(BSP_TTY_USART_RCC);
-    rcc_periph_clock_enable(BSP_TTY_GPIO_RCC);
 
-    gpio_set_mode(BSP_TTY_GPIO_PORT,
-            GPIO_MODE_OUTPUT_50_MHZ,
-            GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
-            BSP_TTY_GPIO_TXPIN);
+    bspGpioInit(BSP_GPIO_TTYTX,
+            BSP_GPIO_MODE_OUT_50MHZ, BSP_GPIO_CNF_OUT_ALTFN_PUSHPULL);
 
-    gpio_set_mode(BSP_TTY_GPIO_PORT,
-            GPIO_MODE_INPUT,
-            GPIO_CNF_INPUT_FLOAT,
-            BSP_TTY_GPIO_RXPIN);
+    bspGpioInit(BSP_GPIO_TTYRX,
+            BSP_GPIO_MODE_IN, BSP_GPIO_CNF_IN_FLOAT);
 
     usart_set_baudrate(BSP_TTY_USART, baud);
     usart_set_databits(BSP_TTY_USART, 8);
@@ -137,23 +149,16 @@ void bspTTYInit(uint32_t baud)
 
     usart_enable(BSP_TTY_USART);
 
-    /**
-     * stdout is line buffered by default. This might cause issues on a MCU.
-     * ToDo: What impacts does this cause .. is there a better way?
-     */
-    setvbuf(stdout,NULL, _IONBF, 0);
-
 #if BSP_TTY_DMA_MODE == BSP_ENABLED
 
     ttyData.TxBytes = 0;
     ttyData.lostBytes = 0;
 
-    fifoInit(&fifo, ttyData.fifoData, sizeof(ttyData.fifoData));
+    fifoInit(&ttyFifo, ttyData.Data, sizeof(ttyData.Data));
 
     rcc_periph_clock_enable(RCC_DMA1);
 
     nvic_set_priority(NVIC_DMA1_CHANNEL7_IRQ, 0);
-    nvic_enable_irq(NVIC_DMA1_CHANNEL7_IRQ);
 
     dma_channel_reset(DMA1, DMA_CHANNEL7);
     dma_set_peripheral_address(DMA1, DMA_CHANNEL7, (uint32_t)&USART2_DR);
@@ -165,15 +170,17 @@ void bspTTYInit(uint32_t baud)
 
     dma_enable_transfer_complete_interrupt(DMA1, DMA_CHANNEL7);
 
-#endif
+#endif /* BSP_TTY_DMA_MODE == BSP_ENABLED */
 }
 
 bspStatus_t bspTTYSendData(uint8_t *pData, uint16_t siz)
 {
-    unused(pData);
-    unused(siz);
+    bspStatus_t ret = BSP_OK;
 
-    return BSP_OK;
+    if (_write(1, (char *) pData, siz) != (int) siz)
+        ret = BSP_ERR;
+
+    return ret;
 }
 
 bool bspTTYDataAvailable(void)

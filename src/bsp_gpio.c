@@ -11,53 +11,17 @@
 #include "libopencm3/stm32/rcc.h"
 #include "libopencm3/stm32/gpio.h"
 
-void bspLedInit(void)
+void bspGpioInit(bspGpioPin_t pin, uint8_t mode, uint8_t cnf)
 {
-    rcc_periph_clock_enable(BSP_LED_RCC);
-
-    gpio_set_mode(BSP_LED_PORT,
-            GPIO_MODE_OUTPUT_2_MHZ,
-            GPIO_CNF_OUTPUT_PUSHPULL,
-            BSP_LED_PIN);
+    rcc_periph_clock_enable(
+            (enum rcc_periph_clken) _REG_BIT(0x18, BSP_IOMAPRCC(pin)));
+    gpio_set_mode(BSP_IOMAPPORT(pin), mode, cnf, BSP_IOMAPIN(pin));
 }
 
-void bspLedOn(void)
-{
-    gpio_set(BSP_LED_PORT, BSP_LED_PIN);
-}
-
-void bspLedOff(void)
-{
-    gpio_clear(BSP_LED_PORT, BSP_LED_PIN);
-}
-
-void bspLedToggle(void)
-{
-    gpio_toggle(BSP_LED_PORT, BSP_LED_PIN);
-}
-
-void bspLedSet(uint32_t val)
+void bspGpioWrite(bspGpioPin_t pin, uint32_t val)
 {
     if (val == 0)
-        gpio_clear(BSP_LED_PORT, BSP_LED_PIN);
+        bspGpioClear(pin);
     else
-        gpio_set(BSP_LED_PORT, BSP_LED_PIN);
-
+        bspGpioSet(pin);
 }
-
-void bspButtonInit(void)
-{
-    rcc_periph_clock_enable(BSP_BUTTON_RCC);
-
-    gpio_set_mode(BSP_BUTTON_PORT,
-            GPIO_MODE_INPUT,
-            GPIO_CNF_INPUT_FLOAT,
-            BSP_BUTTON_PIN);
-}
-
-bool bspButtonGet(void)
-{
-    return !!gpio_get(BSP_BUTTON_PORT, BSP_BUTTON_PIN);
-}
-
-

@@ -5,7 +5,7 @@
  *      Author: julian
  */
 
-#ifndef BSP_IO_H_
+#ifndef BSP_GPIO_H_
 #define BSP_GPIO_H_
 
 #include "bsp.h"
@@ -98,6 +98,8 @@ typedef enum
     BSP_GPIO_F0         = BSP_IOMAPVAL(GPIOF, 0),
     BSP_GPIO_F1         = BSP_IOMAPVAL(GPIOF, 1),
 
+	BSP_GPIO_INVALID	= 0
+
 }bspGpioPin_t;
 
 /**
@@ -125,7 +127,7 @@ typedef enum
     BSP_GPIO_CNF_OUT_ALTFN_PUSHPULL  = GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
     BSP_GPIO_CNF_OUT_ALTFN_OPENDRAIN = GPIO_CNF_OUTPUT_ALTFN_OPENDRAIN,
 
-}bpsGpioCnf_t;
+}bspGpioCnf_t;
 
 /**
  * Used to initialize any of the defined gpio's.
@@ -134,7 +136,7 @@ typedef enum
  * @param mode
  * @param cnf
  */
-void bspGpioInit(bspGpioPin_t pin, bspGpioMode_t mode, bpsGpioCnf_t cnf);
+void bspGpioInit(bspGpioPin_t pin, bspGpioMode_t mode, bspGpioCnf_t cnf);
 
 /**
  * Used to initialize the gipo used for the on board led.

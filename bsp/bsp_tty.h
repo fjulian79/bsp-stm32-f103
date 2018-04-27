@@ -5,12 +5,10 @@
  *      Author: julian
  */
 
-#ifndef BSP_USART_H_
-#define BSP_USART_H_
+#ifndef LIBBSP_NUCLEO_F103_BSP_TTY_H_
+#define LIBBSP_NUCLEO_F103_BSP_TTY_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bsp/bsp.h"
 
 /**
  * Used to setup the usart.
@@ -45,8 +43,4 @@ bool bspTTYDataAvailable(void);
  */
 char bspTTYGetChar(void);
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* BSP_USART_H_ */
+#endif /* LIBBSP_NUCLEO_F103_BSP_TTY_H_ */

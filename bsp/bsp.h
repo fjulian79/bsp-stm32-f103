@@ -116,9 +116,6 @@
  */
 #define BSP_IRQPRIO_MAX                     0x00
 
-//#define BSP_IRQPRIO_TIMER0                  0x02
-//#define BSP_IRQPRIO_I2C0                    0x03
-
 #ifndef BSP_IRQPRIO_FREERTOS_SYSCALL
 
 /**
@@ -130,12 +127,6 @@
 #define BSP_IRQPRIO_FREERTOS_SYSCALL        0x04
 
 #endif
-
-//#define BSP_IRQPRIO_USART2TX                0x04
-//#define BSP_IRQPRIO_DMA                     0x05
-//#define BSP_IRQPRIO_TIMER2                  0x06
-//#define BSP_IRQPRIO_UART0TX                 0x07
-//#define BSP_IRQPRIO_UART0RX                 0x07
 
 /**
  * The lowest interrupt priority that can be used in a call to a

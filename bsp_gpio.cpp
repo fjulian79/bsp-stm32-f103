@@ -61,6 +61,8 @@ void bspGpioInit(void)
     init.Pull = LL_GPIO_PULL_UP;
     init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
     bspGpioPinInit(BSP_GPIO_TTY_TX, &init);
+
+    init.Mode = LL_GPIO_MODE_FLOATING;
     bspGpioPinInit(BSP_GPIO_TTY_RX, &init);
 }
 

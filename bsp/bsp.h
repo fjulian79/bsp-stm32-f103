@@ -34,6 +34,9 @@
 #define BSP_GPIO_A2                         BSP_GPIO_TTY_TX
 #define BSP_GPIO_A3                         BSP_GPIO_TTY_RX
 
+#define TTY_USARTx_IRQn                     USART2_IRQn
+#define TTY_USARTx_IRQHandler               USART2_IRQHandler
+
 /* Hence that the DMA channel to use is hard coded by ST.
  * See DMA channel assignment table below. */
 #define TTY_TXDMACH                         DMA1_Channel7

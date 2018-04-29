@@ -82,6 +82,37 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
 
 #endif /* BSP_TTY_TX_DMA == BSP_ENABLED */
 
+#if BSP_TTY_RX_IRQ == BSP_ENABLED
+
+/**
+ * TTY Rx data shared with the interrupt.
+ */
+struct
+{
+    char Data[BSP_TTY_RX_BUFSIZ];
+    uint32_t NumLost;
+
+} ttyRxData;
+
+/**
+ * Generic fifo instance operation on ttyData.Data
+ */
+Fifo *pRxFifo;
+
+extern "C" void TTY_USARTx_IRQHandler(void)
+{
+    if(   LL_USART_IsActiveFlag_RXNE(TTY_USARTx)
+       && LL_USART_IsEnabledIT_RXNE(TTY_USARTx))
+    {
+        uint8_t data = LL_USART_ReceiveData8(TTY_USARTx);
+
+        if (pRxFifo->put(&data))
+            ttyRxData.NumLost++;
+    }
+}
+
+#endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
+
 /**
  * Called by c library for printf calls.
  *
@@ -177,6 +208,17 @@ void bspTTYInit(uint32_t baud)
 
     LL_USART_Enable(TTY_USARTx);
 
+#if BSP_TTY_RX_IRQ == BSP_ENABLED
+
+    ttyRxData.NumLost = 0;
+    pRxFifo = new Fifo(ttyRxData.Data, sizeof(ttyRxData.Data));
+
+    NVIC_SetPriority(USART2_IRQn, BSP_TTY_USART_IRQ_PRIO);
+    NVIC_EnableIRQ(USART2_IRQn);
+    LL_USART_EnableIT_RXNE(TTY_USARTx);
+
+#endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
+
 #if BSP_TTY_TX_DMA == BSP_ENABLED
 
     LL_DMA_InitTypeDef dma;
@@ -215,12 +257,31 @@ bspStatus_t bspTTYSendData(uint8_t *pData, uint16_t siz)
 
 bool bspTTYDataAvailable(void)
 {
+#if BSP_TTY_RX_IRQ == BSP_ENABLED
+
+    return pRxFifo->getUsed() != 0 ? true : false;
+
+#else /* BSP_TTY_RX_IRQ == BSP_ENABLED */
+
     return LL_USART_IsActiveFlag_RXNE(TTY_USARTx) ? true : false;
+
+#endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
 }
 
 char bspTTYGetChar(void)
 {
     while (!bspTTYDataAvailable());
 
+#if BSP_TTY_RX_IRQ == BSP_ENABLED
+
+    char data;
+    pRxFifo->get(&data);
+
+    return data;
+
+#else /* BSP_TTY_RX_IRQ == BSP_ENABLED */
+
     return LL_USART_ReceiveData8(TTY_USARTx);
+
+#endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
 }

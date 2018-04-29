@@ -14,6 +14,37 @@
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
 
+#if BSP_SYSTICK == BSP_ENABLED
+
+/**
+ * The bsp controls the sys tick. We have to maintain the tick counter, enable
+ * the interrupt and implement it
+ */
+volatile uint32_t sysTick = 0;
+
+extern "C" void SysTick_Handler(void)
+{
+    sysTick++;
+}
+
+uint32_t bspGetSysTick(void)
+{
+  return sysTick;
+}
+
+void bspDelayMs(uint32_t delay)
+{
+    uint32_t tickstart = bspGetSysTick();
+
+    /* Add a period to guarantee minimum wait */
+    if (delay < BSP_MAX_DELAY)
+        delay++;
+
+    while((bspGetSysTick() - tickstart) < delay);
+}
+
+#endif /* BSP_SYSTICK == BSP_ENABLED */
+
 /**
  * All clock´s shall be managed here to keep the big picture.
  */
@@ -36,8 +67,16 @@ static inline void bspClockInit(void)
     LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
     LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
-    LL_Init1msTick(72000000);
     LL_SetSystemCoreClock(72000000);
+
+    LL_Init1msTick(72000000);
+
+#if BSP_SYSTICK == BSP_ENABLED
+
+    SysTick->CTRL  |= SysTick_CTRL_TICKINT_Msk;
+    NVIC_SetPriority(SysTick_IRQn, BSP_SYSTICK_IRQ_PRIO);
+
+#endif /* BSP_SYSTICK == BSP_ENABLED */
 
     /* DMA is used for the tty etc. */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
@@ -56,3 +95,4 @@ void bspChipInit(void)
     /* Configure the tty */
     bspTTYInit(BSP_TTY_BAUDRATE);
 }
+

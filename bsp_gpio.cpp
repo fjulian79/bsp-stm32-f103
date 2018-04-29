@@ -49,9 +49,7 @@ void bspGpioInit(void)
     init.Pull = LL_GPIO_PULL_DOWN;
     init.Speed = LL_GPIO_SPEED_FREQ_MEDIUM;
     bspGpioPinInit(BSP_GPIO_LED, &init);
-    bspGpioPinInit(BSP_GPIO_A6, &init);
-    bspGpioPinInit(BSP_GPIO_A7, &init);
-	
+
 	/* Button */
 	init.Mode = LL_GPIO_MODE_INPUT;
     init.Pull = LL_GPIO_PULL_DOWN;

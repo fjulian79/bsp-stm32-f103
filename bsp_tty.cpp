@@ -18,23 +18,23 @@
 #include <stdio.h>
 #include <errno.h>
 
-#if BSP_TTY_DMA_MODE == BSP_ENABLED
+#if BSP_TTY_TX_DMA == BSP_ENABLED
 
 /**
  * TTY Data shared with the interrupt.
  */
 struct
 {
-    char Data[BSP_TTY_BUFFERSIZE];
+    char Data[BSP_TTY_TX_BUFSIZ];
     volatile size_t TxBytes;
-    uint32_t lostBytes;
+    uint32_t NumLost;
 
-} ttyData;
+} ttyTxData;
 
 /**
  * Generic fifo instance operation on ttyData.Data
  */
-Fifo *pFifo;
+Fifo *pTxFifo;
 
 /**
  * Starts a DMS transfer at the given address with the given length.
@@ -64,11 +64,11 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
         LL_USART_DisableDMAReq_TX(TTY_USARTx);
         LL_DMA_DisableChannel(DMA1, TTY_TXDMACH_LLCH);
 
-        pFifo->free(ttyData.TxBytes);
-        ttyData.TxBytes = pFifo->getReadBlock((void**)&ptr);
+        pTxFifo->free(ttyTxData.TxBytes);
+        ttyTxData.TxBytes = pTxFifo->getReadBlock((void**)&ptr);
 
-        if (ttyData.TxBytes != 0)
-            startDmaTx(ptr, ttyData.TxBytes);
+        if (ttyTxData.TxBytes != 0)
+            startDmaTx(ptr, ttyTxData.TxBytes);
     }
     else
     {
@@ -80,7 +80,7 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
     }
 }
 
-#endif /* BSP_TTY_DMA_MODE == BSP_ENABLED */
+#endif /* BSP_TTY_TX_DMA == BSP_ENABLED */
 
 /**
  * Called by c library for printf calls.
@@ -96,7 +96,7 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
 
 extern "C" int _write(int file, char *pData, int siz)
 {
-#if BSP_TTY_DMA_MODE == BSP_ENABLED
+#if BSP_TTY_TX_DMA == BSP_ENABLED
 
     int tmp = 0;
     uint8_t *ptr = NULL;
@@ -104,21 +104,21 @@ extern "C" int _write(int file, char *pData, int siz)
     NVIC_DisableIRQ(TTY_TXDMACH_IRQn);
 
     if (siz == 1)
-        tmp = pFifo->put(pData);
+        tmp = pTxFifo->put(pData);
     else
-        tmp = pFifo->write(pData, siz);
+        tmp = pTxFifo->write(pData, siz);
 
-    if (ttyData.TxBytes == 0)
+    if (ttyTxData.TxBytes == 0)
     {
-        ttyData.TxBytes = pFifo->getReadBlock((void**)&ptr);
-        startDmaTx(ptr, ttyData.TxBytes);
+        ttyTxData.TxBytes = pTxFifo->getReadBlock((void**)&ptr);
+        startDmaTx(ptr, ttyTxData.TxBytes);
     }
 
     NVIC_EnableIRQ(TTY_TXDMACH_IRQn);
 
 #if BSP_TTY_BLOCKING == BSP_ENABLED
 
-    while (pFifo->getFree() == 0 && (tmp < siz));
+    while (pTxFifo->getFree() == 0 && (tmp < siz));
     return tmp;
 
 #else /* BSP_TTY_BLOCKING == BSP_ENABLED */
@@ -128,7 +128,7 @@ extern "C" int _write(int file, char *pData, int siz)
 
 #endif /* BSP_TTY_BLOCKING == BSP_ENABLED */
 
-#else /* #if BSP_TTY_DMA_MODE == BSP_ENABLED */
+#else /* #if BSP_TTY_TX_DMA == BSP_ENABLED */
 
     for (int pos = 0; pos < siz; pos++)
     {
@@ -177,13 +177,13 @@ void bspTTYInit(uint32_t baud)
 
     LL_USART_Enable(TTY_USARTx);
 
-#if BSP_TTY_DMA_MODE == BSP_ENABLED
+#if BSP_TTY_TX_DMA == BSP_ENABLED
 
     LL_DMA_InitTypeDef dma;
 
-    ttyData.TxBytes = 0;
-    ttyData.lostBytes = 0;
-    pFifo = new Fifo(ttyData.Data, sizeof(ttyData.Data));
+    ttyTxData.TxBytes = 0;
+    ttyTxData.NumLost = 0;
+    pTxFifo = new Fifo(ttyTxData.Data, sizeof(ttyTxData.Data));
 
     dma.Mode = LL_DMA_MODE_NORMAL;
     dma.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;
@@ -200,7 +200,7 @@ void bspTTYInit(uint32_t baud)
     LL_DMA_EnableIT_TC(DMA1, TTY_TXDMACH_LLCH);
     LL_DMA_EnableIT_TE(DMA1, TTY_TXDMACH_LLCH);
 
-#endif
+#endif /* BSP_TTY_TX_DMA == BSP_ENABLED */
 }
 
 bspStatus_t bspTTYSendData(uint8_t *pData, uint16_t siz)
@@ -220,7 +220,7 @@ bool bspTTYDataAvailable(void)
 
 char bspTTYGetChar(void)
 {
-    while (!LL_USART_IsActiveFlag_RXNE(TTY_USARTx));
+    while (!bspTTYDataAvailable());
 
     return LL_USART_ReceiveData8(TTY_USARTx);
 }

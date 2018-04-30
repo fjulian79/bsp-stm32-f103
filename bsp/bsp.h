@@ -152,6 +152,42 @@ typedef enum
 
 } bspStatus_t;
 
+#if BSP_SYSTICK == BSP_ENABLED
+
+#define BSP_MAX_DELAY                       UINT32_MAX
+
+/**
+ * The bsp internal sys tick counter.
+ */
+extern volatile uint32_t sysTick;
+
+/**
+ * Used to the current sys tick counter value.
+ *
+ * @return  The sys tick value.
+ */
+uint32_t bspGetSysTick(void);
+
+/**
+ * Used to implement a busy waiting delay for the given amount of time.
+ *
+ * @param delay     The delay in ms.
+ */
+void bspDelayMs(uint32_t delay);
+
+#else /* BSP_SYSTICK == BSP_ENABLED */
+
+#ifndef bspDelayMs
+
+/**
+ *  As last resort use the stm32cube ll implementation of a delay.
+ */
+#define bspDelayMs                          LL_mDelay
+
+#endif
+
+#endif /* BSP_SYSTICK == BSP_ENABLED */
+
 /**
  * Used to implement generic chip initialization
  */

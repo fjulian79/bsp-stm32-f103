@@ -19,6 +19,17 @@
 #define BSP_DISABLED                    0
 
 /**
+ * Enable to use the internal oscilator.
+ * 
+ * Attetion:  If enable the system clock will be set to 64MHz
+ *              
+ *            If disabled or undefined the system clock we be generated from
+ *            HSE bypass and will be set to 72Mhz. It is assumed that a 8MHz
+ *            is provided to the external clock input.
+ */
+#define BSP_CLOCKSRC_HSI                BSP_DISABLED
+
+/**
  * If enabled the bsp implements the sys tick interrupt and runs a tick counter.
  */
 #define BSP_SYSTICK                     BSP_ENABLED

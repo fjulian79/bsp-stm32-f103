@@ -47,13 +47,6 @@
 #define TTY_TXDMACH_CLEARFLAG_TC()          LL_DMA_ClearFlag_TC7(DMA1)
 
 /**
- * I2C configuration
- */
-//#define BSP_I2CPORT                         gpioPortA
-//#define BSP_I2CSDAPIN                       0
-//#define BSP_I2CSCLPIN                       1
-
-/**
  * DMA channel assignment from ST.
  * Hence that this hard coded and can not be changed!
  */
@@ -155,11 +148,6 @@ typedef enum
 #if BSP_SYSTICK == BSP_ENABLED
 
 #define BSP_MAX_DELAY                       UINT32_MAX
-
-/**
- * The bsp internal sys tick counter.
- */
-extern volatile uint32_t sysTick;
 
 /**
  * Used to the current sys tick counter value.

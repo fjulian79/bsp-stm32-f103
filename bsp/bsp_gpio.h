@@ -1,12 +1,12 @@
 /*
- * bsp_io.h
+ * bsp_gpio.h
  *
  *  Created on: Mar 25, 2018
  *      Author: julian
  */
 
-#ifndef LIBBSP_NUCLEO_F103_BSP_GPIO_H_
-#define LIBBSP_NUCLEO_F103_BSP_GPIO_H_
+#ifndef BSP_NUCLEO_F103_GPIO_H_
+#define BSP_NUCLEO_F103_GPIO_H_
 
 #include <stm32f1xx_ll_gpio.h>
 
@@ -164,4 +164,4 @@ void bspGpioWrite(
 bool bspGpioRead(
         bspGpioPin_t pin);
 
-#endif /* LIBBSP_NUCLEO_F103_BSP_GPIO_H_ */
+#endif /* BSP_NUCLEO_F103_GPIO_H_ */

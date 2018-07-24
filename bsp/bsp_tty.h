@@ -1,12 +1,12 @@
 /*
- * bsp_usart.h
+ * bsp_tty.h
  *
  *  Created on: Jun 4, 2017
  *      Author: julian
  */
 
-#ifndef LIBBSP_NUCLEO_F103_BSP_TTY_H_
-#define LIBBSP_NUCLEO_F103_BSP_TTY_H_
+#ifndef BSP_NUCLEO_F103_TTY_H_
+#define BSP_NUCLEO_F103_TTY_H_
 
 #include "bsp/bsp.h"
 
@@ -43,4 +43,4 @@ bool bspTTYDataAvailable(void);
  */
 char bspTTYGetChar(void);
 
-#endif /* LIBBSP_NUCLEO_F103_BSP_TTY_H_ */
+#endif /* BSP_NUCLEO_F103_TTY_H_ */

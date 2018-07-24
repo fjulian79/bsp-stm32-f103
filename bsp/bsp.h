@@ -5,8 +5,8 @@
  *      Author: julian
  */
 
-#ifndef LIBBSP_NUCLEO_F103_BSP_H_
-#define LIBBSP_NUCLEO_F103_BSP_H_
+#ifndef BSP_NUCLEO_F103_H_
+#define BSP_NUCLEO_F103_H_
 
 #include "bsp_config.h"
 
@@ -142,7 +142,7 @@ typedef enum
       BSP_EBUSY,            ///<! Recourse busy
       BSP_ETIMEOUT,         ///<! Timeout
       BSP_EEINVAL,          ///<! Invalid arguments
-
+      BSP_ELOCK,            ///<! Locking error
 } bspStatus_t;
 
 #if BSP_SYSTICK == BSP_ENABLED
@@ -182,4 +182,4 @@ void bspDelayMs(uint32_t delay);
 void bspChipInit(
       void);
 
-#endif /* LIBBSP_NUCLEO_F103_BSP_H_ */
+#endif /* BSP_NUCLEO_F103_H_ */

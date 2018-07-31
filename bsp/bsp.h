@@ -143,6 +143,10 @@ typedef enum
       BSP_ETIMEOUT,         ///<! Timeout
       BSP_EEINVAL,          ///<! Invalid arguments
       BSP_ELOCK,            ///<! Locking error
+      BSP_EEMPTY,           ///<! is empty 
+      BSP_ENEMPTY,          ///<! is not empty 
+      BSP_ERANGE,           ///<! Range violation
+      BSP_ESIZE             ///<! Size violation
 } bspStatus_t;
 
 #if BSP_SYSTICK == BSP_ENABLED

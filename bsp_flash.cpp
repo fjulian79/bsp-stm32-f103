@@ -23,7 +23,7 @@
  */
 #define BSP_FLASH_MODEBITS                                      \
                                                                 \
-        (FLASH_CR_PER | FLASH_CR_MER | FLASH_CR_OPTPG)
+        (FLASH_CR_PG | FLASH_CR_PER | FLASH_CR_MER | FLASH_CR_OPTPG)
 
 /**
  * Needed to make shure to hae only the desired mode bit set.

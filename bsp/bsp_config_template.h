@@ -5,8 +5,8 @@
  *      Author: julian
  */
 
-#ifndef LIBBSP_NUCLEO_F103_BSP_CONFIG_H_
-#define LIBBSP_NUCLEO_F103_BSP_CONFIG_H_
+#ifndef BSP_NUCLEO_F103_BSP_CONFIG_H_
+#define BSP_NUCLEO_F103_BSP_CONFIG_H_
 
 /**
  * BSP global enabled definitions.
@@ -98,4 +98,4 @@
  */
 #define BSP_DOASSERT                    BSP_ENABLED
 
-#endif /* LIBBSP_NUCLEO_F103_BSP_CONFIG_H_ */
+#endif /* BSP_NUCLEO_F103_BSP_CONFIG_H_ */

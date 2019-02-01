@@ -183,9 +183,10 @@ bspStatus_t bspFlashWaitForLastOperation(uint32_t timeout)
     /* guarantee minimum wait */
     timeout++;
 
-    /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
-     * Even if the FLASH operation fails, the BUSY flag will be reset and an error
-     * flag will be set. The error check is performed by bspFlashSetErr();
+    /* Wait for the FLASH operation to complete by polling on BUSY flag to be 
+     * reset. Even if the FLASH operation fails, the BUSY flag will be reset 
+     * and an error flag will be set. The error check is performed by
+     * bspFlashSetErr();
      * */
     while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) 
     { 

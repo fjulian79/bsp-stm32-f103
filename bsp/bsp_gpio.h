@@ -108,9 +108,9 @@ typedef enum
  * @param init  Parameters to use. Hence the pin number given by this struct
  *              will be overwritten by the number derived from the pin ID.
  */
-void bspIoPinInit(
+void bspGpioPinInit(
         bspGpioPin_t pin,
-        GPIO_InitTypeDef *init);
+        LL_GPIO_InitTypeDef *init);
 
 /**
  * Used to initialize gpio pins used by the bsp internally.

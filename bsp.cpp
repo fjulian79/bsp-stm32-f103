@@ -30,6 +30,11 @@
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
 
+inline bool bspIsInterrupt()
+{
+    return (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0 ;
+}
+
 #if BSP_SYSTICK == BSP_ENABLED
 
 /**

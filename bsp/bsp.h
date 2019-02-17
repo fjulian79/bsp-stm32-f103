@@ -196,6 +196,12 @@ void bspDelayMs(uint32_t delay);
 #endif /* BSP_SYSTICK == BSP_ENABLED */
 
 /**
+ * Used to check if the current code is executed in the context of a interrupt.
+ * Attention: Not tested yet!
+ */
+bool bspInInterrupt();
+
+/**
  * Used to implement generic chip initialization
  */
 void bspChipInit(

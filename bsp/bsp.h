@@ -5,8 +5,8 @@
  *      Author: julian
  */
 
-#ifndef LIBBSP_NUCLEO_F103_BSP_H_
-#define LIBBSP_NUCLEO_F103_BSP_H_
+#ifndef BSP_NUCLEO_F103_H_
+#define BSP_NUCLEO_F103_H_
 
 #include "bsp_config.h"
 
@@ -45,13 +45,6 @@
 #define TTY_TXDMACH_LLCH                    LL_DMA_CHANNEL_7
 #define TTY_TXDMACH_ISACTIVEFLAG_TC()       LL_DMA_IsActiveFlag_TC7(DMA1)
 #define TTY_TXDMACH_CLEARFLAG_TC()          LL_DMA_ClearFlag_TC7(DMA1)
-
-/**
- * I2C configuration
- */
-//#define BSP_I2CPORT                         gpioPortA
-//#define BSP_I2CSDAPIN                       0
-//#define BSP_I2CSCLPIN                       1
 
 /**
  * DMA channel assignment from ST.
@@ -149,17 +142,16 @@ typedef enum
       BSP_EBUSY,            ///<! Recourse busy
       BSP_ETIMEOUT,         ///<! Timeout
       BSP_EEINVAL,          ///<! Invalid arguments
-
+      BSP_ELOCK,            ///<! Locking error
+      BSP_EEMPTY,           ///<! is empty 
+      BSP_ENEMPTY,          ///<! is not empty 
+      BSP_ERANGE,           ///<! Range violation
+      BSP_ESIZE             ///<! Size violation
 } bspStatus_t;
 
 #if BSP_SYSTICK == BSP_ENABLED
 
 #define BSP_MAX_DELAY                       UINT32_MAX
-
-/**
- * The bsp internal sys tick counter.
- */
-extern volatile uint32_t sysTick;
 
 /**
  * Used to the current sys tick counter value.
@@ -194,4 +186,4 @@ void bspDelayMs(uint32_t delay);
 void bspChipInit(
       void);
 
-#endif /* LIBBSP_NUCLEO_F103_BSP_H_ */
+#endif /* BSP_NUCLEO_F103_H_ */

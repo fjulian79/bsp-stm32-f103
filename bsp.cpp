@@ -50,13 +50,30 @@ void bspDelayMs(uint32_t delay)
  */
 static inline void bspClockInit(void)
 {
+    int clk = 0;
+
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_2);
+
+#ifndef BSP_CLOCKSRC_HSI
 
     LL_RCC_HSE_EnableBypass();
     LL_RCC_HSE_Enable();
+    
     while(LL_RCC_HSE_IsReady() != 1);
 
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE_DIV_1, LL_RCC_PLL_MUL_9);
+    clk = 72000000;
+
+#else
+
+    LL_RCC_HSI_Enable();
+    while(LL_RCC_HSI_IsReady() != 1);
+
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI_DIV_2, LL_RCC_PLL_MUL_16);
+    clk = 64000000;
+
+#endif
+
     LL_RCC_PLL_Enable();
     while(LL_RCC_PLL_IsReady() != 1);
 
@@ -67,9 +84,9 @@ static inline void bspClockInit(void)
     LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
     LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
-    LL_SetSystemCoreClock(72000000);
+    LL_SetSystemCoreClock(clk);
 
-    LL_Init1msTick(72000000);
+    LL_Init1msTick(clk);
 
 #if BSP_SYSTICK == BSP_ENABLED
 

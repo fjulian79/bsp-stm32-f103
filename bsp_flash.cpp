@@ -22,7 +22,7 @@
 
 #include "bsp/bsp_flash.h"
 
-#include "stm32f1xx.h"
+#include <stm32f1xx.h>
 #include <stm32f1xx_hal_flash.h>
 
 #include <stdint.h>

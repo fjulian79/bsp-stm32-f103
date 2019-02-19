@@ -58,4 +58,16 @@ bool bspTTYDataAvailable(void);
  */
 char bspTTYGetChar(void);
 
+#if BSP_ASSERT_MESSAGE == BSP_ENABLED
+
+/**
+ * Used to print a assert message from any possible context.
+ * This function can be assumed to prevent the tty from working as usual. The 
+ * root cause for that behaviour is that this function as to work in any 
+ * possible context, also in every interrupt.
+ */
+void bspTTYAssertMessage(char *pChar);
+
+#endif /* BSP_ASSERT_MESSAGE == BSP_ENABLED */
+
 #endif /* BSP_NUCLEO_F103_TTY_H_ */

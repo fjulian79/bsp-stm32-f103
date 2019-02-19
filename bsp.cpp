@@ -24,7 +24,7 @@
 #include <stm32f1xx_ll_rcc.h>
 #include <stm32f1xx_ll_system.h>
 #include <stm32f1xx_ll_utils.h>
-#include "stm32f1xx_ll_bus.h"
+#include <stm32f1xx_ll_bus.h>
 
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"

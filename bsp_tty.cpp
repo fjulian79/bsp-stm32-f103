@@ -26,6 +26,8 @@
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
+#include "bsp/bsp_assert.h"
+
 #include "generic/generic.hpp"
 #include "generic/fifo.hpp"
 
@@ -87,11 +89,7 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
     }
     else
     {
-        while(1)
-        {
-            bspGpioToggle(BSP_GPIO_LED);
-            LL_mDelay(50);
-        }
+        bspAssert(0);
     }
 }
 
@@ -307,3 +305,32 @@ char bspTTYGetChar(void)
 
 #endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
 }
+
+#if BSP_ASSERT_MESSAGE == BSP_ENABLED
+
+void bspTTYAssertMessage(char *pChar)
+{
+#if BSP_TTY_TX_DMA == BSP_ENABLED
+
+    /* If a transfer is ongoing let it complete and disable the DMA once it 
+     * is done */
+    if(LL_DMA_IsEnabledChannel(DMA1, TTY_TXDMACH_LLCH))
+    {
+        while(!TTY_TXDMACH_ISACTIVEFLAG_TC());
+        TTY_TXDMACH_CLEARFLAG_TC();
+        LL_USART_DisableDMAReq_TX(TTY_USARTx);
+        LL_DMA_DisableChannel(DMA1, TTY_TXDMACH_LLCH);
+    }
+
+#endif /* BSP_TTY_TX_DMA == BSP_ENABLED */    
+
+    /* Do use DMA here as interrupts will most likely not work anymore */
+    while (pChar != 0)
+    {
+        while (!LL_USART_IsActiveFlag_TXE(TTY_USARTx));
+        LL_USART_TransmitData8(TTY_USARTx, *pChar);
+        pChar++;
+    }
+}
+
+#endif /* BSP_ASSERT_MESSAGE == BSP_ENABLED */

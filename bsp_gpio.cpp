@@ -23,17 +23,19 @@
 #include <bsp/bsp_gpio.h>
 
 /**
- * Derives the gpio port from the bsp gipo pin ID.
+ * @brief Derives the gpio port from the bsp gipo pin ID.
  */
 #define BSP_IOMAPPORT(_val)     ((GPIO_TypeDef *) (APB2PERIPH_BASE + (((uint32_t)_val) >> 16)))
 
 /**
- * Derives the bit mask for enabling the gpio clock from the bsp gpio pin ID.
+ * @brief Derives the bit mask for enabling the gpio clock from the bsp gpio 
+ * pin ID.
  */
 #define BSP_IOMAPPEN(_val)      (0x1 << (((uint32_t)_val) >> 26))
 
 /**
- * Derives the bit mask for accessing the gpio pin from the bsp gpio pin ID.
+ * @brief Derives the bit mask for accessing the gpio pin from the bsp gpio 
+ * pin ID.
  */
 #define BSP_IOMAPPIN(_val)      (((uint32_t)_val) & 0xFFFF)
 

@@ -38,8 +38,8 @@ inline bool bspIsInterrupt()
 #if BSP_SYSTICK == BSP_ENABLED
 
 /**
- * The bsp controls the sys tick. We have to maintain the tick counter, enable
- * the interrupt and implement it
+ * @brief The bsp controls the sys tick. We have to maintain the tick counter, 
+ * enable the interrupt and implement it
  */
 volatile uint32_t sysTick = 0;
 
@@ -67,7 +67,7 @@ void bspDelayMs(uint32_t delay)
 #endif /* BSP_SYSTICK == BSP_ENABLED */
 
 /**
- * All clock´s shall be managed here to keep the big picture.
+ * @brief All clock´s shall be managed here to keep the big picture.
  */
 static inline void bspClockInit(void)
 {

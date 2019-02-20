@@ -49,12 +49,13 @@
 #define BSP_GPIO_PIN_All                    (0xffff)
 
 /**
- * Derives a bsp internal gpio ID from the given port and pin.
+ * @brief Derives a bsp internal gpio ID from the given port and pin.
+ * 
  */
 #define BSP_IOMAPVAL(_port, _pin)           ((_port << 16) + _pin)
 
 /**
- * Descriptor of all gpio pins. Hence that some of those names might be
+ * @brief Descriptor of all gpio pins. Hence that some of those names might be
  * overwritten in bsp.h as there special function pins names will be mapped
  * the the generic gpio names.
  */
@@ -117,66 +118,58 @@ typedef enum
 }bspGpioPin_t;
 
 /**
- * Used to initialize a single gpio pin.
+ * @brief Used to initialize a single gpio pin.
  *
  * @param pin   The bsp gpio pin ID.
  * @param init  Parameters to use. Hence the pin number given by this struct
  *              will be overwritten by the number derived from the pin ID.
  */
-void bspGpioPinInit(
-        bspGpioPin_t pin,
-        LL_GPIO_InitTypeDef *init);
+void bspGpioPinInit(bspGpioPin_t pin, LL_GPIO_InitTypeDef *init);
 
 /**
- * Used to initialize gpio pins used by the bsp internally.
+ * @brief Used to initialize gpio pins used by the bsp internally.
  * E.g. tty, led, buttons, etc.
  */
-void bspGpioInit(
-        void);
+void bspGpioInit(void);
 
 /**
- * Sets the given gpio pin to high.
+ * @brief Sets the given gpio pin to high.
  *
  * @param pin   The bsp gpio pin ID.
  */
-void bspGpioSet(
-        bspGpioPin_t pin);
+void bspGpioSet(bspGpioPin_t pin);
 
 /**
- *
- * @param pin
+ * @brief Clears the given gpio pin to high.
+ * 
+ * @param pin   The bsp gpio pin ID.
  */
-void bspGpioClear(
-        bspGpioPin_t pin);
+void bspGpioClear(bspGpioPin_t pin);
 
 /**
- * Sets the given gpio pin to low.
+ * @brief Sets the given gpio pin to low.
  *
  * @param pin   The bsp gpio pin ID.
  */
-void bspGpioToggle(
-        bspGpioPin_t pin);
+void bspGpioToggle(bspGpioPin_t pin);
 
 /**
- * Sets the given gpio pin based on the given value.
+ * @brief Sets the given gpio pin based on the given value.
  *
  * @param pin   The bsp gpio pin ID.
  * @param val   If not zero the pin will be set to high.
  *              If zero the pin will become low.
  */
-void bspGpioWrite(
-        bspGpioPin_t pin,
-        uint32_t val);
+void bspGpioWrite(bspGpioPin_t pin, uint32_t val);
 
 /**
- * Used to read the given gpio pin.
+ * @brief Used to read the given gpio pin.
  *
  * @param pin   The bsp gpio pin ID.
  *
  * @return  true    if the pin is high.
  *          false   if the pin is low.
  */
-bool bspGpioRead(
-        bspGpioPin_t pin);
+bool bspGpioRead(bspGpioPin_t pin);
 
 #endif /* BSP_NUCLEO_F103_GPIO_H_ */

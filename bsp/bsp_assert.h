@@ -16,33 +16,50 @@
 #if BSP_ASSERT == BSP_ENABLED
 
 /**
- * Implementation of a assertion call which is used to implement all other
- * kinds of assertions.
+ * @brief Implementation of a assertion call which is used to implement all 
+ * other kinds of assertions.
  *
  * If using locks or things of that kind in here mention that this call might
  * be called from a interrupt service routine.
+ * 
+ * Actually there is no need to use this function directly, consider to use 
+ * bspDoAssert()
+ * 
+ * @param pFunc The 
+ * @param line 
  */
-void bspAssertDoCall(const char *pFunc, int line);
+void bspAbort(const char *pFunc, int line);
 
 /**
- * Basic conditional assertion. 
+ * @brief Used to perfrom a assertion without any further condtions.
+ */
+#define bspDoAssert()      bspAbort(__FUNCTION__, __LINE__)
+
+/**
+ * @brief Used to perform a basic conditional assertion on the term _x. If _x 
+ * will evaluate as false the assertion will take place.
  */
 #define bspAssert(_x)                                                       \
                                                                             \
    if(!(_x))                                                                \
    {                                                                        \
-      bspAssertDoCall(__FUNCTION__, __LINE__);                              \
+      bspDoAssert();                                                        \
    }
 
 #else /* BSP_ASSERT == BSP_ENABLED */
 
 /**
- * Empty declaration as assertions are disabled
+ * @brief Empty declaration as assertions are disabled
  */
-#define bspAssertDoCall(_func, _line)
+#define bspAbort(_func, _line)
 
 /**
- * Empty declaration as assertions are disabled
+ * @brief Empty declaration as assertions are disabled
+ */
+#define bspDoAssert()
+
+/**
+ * @brief Empty declaration as assertions are disabled
  */
 #define bspAssert(_x)
 

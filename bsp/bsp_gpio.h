@@ -30,6 +30,9 @@
 
 #include "bsp/bsp.h"
 
+/**
+ * @brief Gerneric pin definitions.
+ */
 #define BSP_GPIO_PIN_0                      (0x0001)
 #define BSP_GPIO_PIN_1                      (0x0002)
 #define BSP_GPIO_PIN_2                      (0x0004)

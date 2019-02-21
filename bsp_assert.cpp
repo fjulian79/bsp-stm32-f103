@@ -37,7 +37,7 @@ void bspAbort(const char *pFunc, int line)
     /* Disable all interrupts to prevent all further actions */
     __disable_irq();
 
-    snprintf (buffer, 80, "\nAssertion in %s(%d)\n", pFunc, line);
+    snprintf(buffer, 80, "\nAssertion in %s(%d)\n", pFunc, line);
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -233,7 +233,7 @@ void bspTTYInit(uint32_t baud)
     ttyRxData.NumLost = 0;
     pRxFifo = new Fifo(ttyRxData.Data, sizeof(ttyRxData.Data));
 
-    NVIC_SetPriority(USART2_IRQn, BSP_TTY_USART_IRQ_PRIO);
+    NVIC_SetPriority(USART2_IRQn, BSP_IRQPRIO_TTY);
     NVIC_EnableIRQ(USART2_IRQn);
     LL_USART_EnableIT_RXNE(TTY_USARTx);
 
@@ -257,7 +257,7 @@ void bspTTYInit(uint32_t baud)
     dma.PeriphOrM2MSrcAddress = LL_USART_DMA_GetRegAddr(TTY_USARTx);
     LL_DMA_Init(DMA1, TTY_TXDMACH_LLCH, &dma);
 
-    NVIC_SetPriority(TTY_TXDMACH_IRQn, 0);
+    NVIC_SetPriority(TTY_TXDMACH_IRQn, BSP_IRQPRIO_TTY);
     NVIC_EnableIRQ(TTY_TXDMACH_IRQn);
     LL_DMA_EnableIT_TC(DMA1, TTY_TXDMACH_LLCH);
     LL_DMA_EnableIT_TE(DMA1, TTY_TXDMACH_LLCH);

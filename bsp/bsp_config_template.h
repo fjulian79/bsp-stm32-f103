@@ -111,8 +111,9 @@
  *
  * See bsp.h for min max vaules and how they should be interpreted.
  */
-#define BSP_SYSTICK_IRQ_PRIO              BSP_IRQPRIO_MAX
-#define BSP_TTY_USART_IRQ_PRIO            (BSP_IRQPRIO_MAX + 1)
+#define BSP_IRQPRIO_SYSTICK               BSP_IRQPRIO_MAX
+#define BSP_IRQPRIO_EXTI                  (BSP_IRQPRIO_MAX + 1)
+#define BSP_IRQPRIO_TTY                   (BSP_IRQPRIO_MAX + 2)
 
 /**
  * If enabled bsp_assert.h will implement assertions.

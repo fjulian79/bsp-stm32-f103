@@ -30,7 +30,7 @@
 #include <stm32f1xx_ll_utils.h>
 
 /**
- * @brief Special GPIO Pin definitions
+ * @brief Definition of used GPIO lines.
  */
 #ifndef BSP_GPIO_A5
 #define BSP_GPIO_A5                         BSP_GPIO_LED
@@ -39,6 +39,13 @@
 #ifndef BSP_GPIO_C13
 #define BSP_GPIO_C13                        BSP_GPIO_BUTTON
 #endif
+
+/**
+ * @brief Definitions of external interrupt lines.
+ */
+#define BSP_BUTTON_EXTI_LINE                LL_EXTI_LINE_13
+#define BSP_BUTTON_GPIO_EXTI_LINE           LL_GPIO_AF_EXTI_LINE13
+#define BSP_BUTTON_GPIO_EXTI_PORT           LL_GPIO_AF_EXTI_PORTC
 
 /**
  * @brief TTY configuration

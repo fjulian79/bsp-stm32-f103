@@ -20,7 +20,6 @@
  * You can file issues at https://github.com/fjulian79/bsp-smartsink
  */
 
-
 #include <stm32f1xx_ll_rcc.h>
 #include <stm32f1xx_ll_system.h>
 #include <stm32f1xx_ll_utils.h>
@@ -112,9 +111,12 @@ static inline void bspClockInit(void)
 #if BSP_SYSTICK == BSP_ENABLED
 
     SysTick->CTRL  |= SysTick_CTRL_TICKINT_Msk;
-    NVIC_SetPriority(SysTick_IRQn, BSP_SYSTICK_IRQ_PRIO);
+    NVIC_SetPriority(SysTick_IRQn, BSP_IRQPRIO_SYSTICK);
 
 #endif /* BSP_SYSTICK == BSP_ENABLED */
+
+    /* For external interrupts we need AFIO */
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
 
     /* DMA is used for the tty etc. */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);

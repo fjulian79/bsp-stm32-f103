@@ -325,7 +325,7 @@ void bspTTYAssertMessage(char *pChar)
 #endif /* BSP_TTY_TX_DMA == BSP_ENABLED */    
 
     /* Do use DMA here as interrupts will most likely not work anymore */
-    while (pChar != 0)
+    while (*pChar != 0)
     {
         while (!LL_USART_IsActiveFlag_TXE(TTY_USARTx));
         LL_USART_TransmitData8(TTY_USARTx, *pChar);

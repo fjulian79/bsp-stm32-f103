@@ -1,5 +1,5 @@
 /*
- * bsp-samrtsink, the board support package for the hardware used in the 
+ * bsp-nucleo-f103, the board support package for the hardware used in the 
  * smartsink project.
  *
  * Copyright (C) 2019 Julian Friedrich

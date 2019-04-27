@@ -1,2 +1,2 @@
-# bsp-smartsink
-The bsp for the SmartSink PCB. It is based on the bsp-nucleo-f103 as this mcu will be used.
+# bsp-stm32-f103
+The board support package for all my stm32 f103 based projects.

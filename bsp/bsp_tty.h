@@ -20,8 +20,8 @@
  * You can file issues at https://github.com/fjulian79/bsp-smartsink
  */
 
-#ifndef BSP_NUCLEO_F103_TTY_H_
-#define BSP_NUCLEO_F103_TTY_H_
+#ifndef BSP_SMARTSINK_TTY_H_
+#define BSP_SMARTSINK_TTY_H_
 
 #include "bsp/bsp.h"
 
@@ -58,4 +58,4 @@ bool bspTTYDataAvailable(void);
  */
 char bspTTYGetChar(void);
 
-#endif /* BSP_NUCLEO_F103_TTY_H_ */
+#endif /* BSP_SMARTSINK_TTY_H_ */

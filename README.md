@@ -1,2 +1,4 @@
-# bsp-stm32-f103
-The board support package for all my stm32 f103 based projects.
+# bsp-smartsink
+The board support package for the hardware used in the smartsink project.
+
+Please megre usefull generec changes back to the master branch.

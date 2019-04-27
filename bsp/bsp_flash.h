@@ -20,8 +20,8 @@
  * You can file issues at https://github.com/fjulian79/bsp-smartsink
  */
 
-#ifndef BSP_NUCLEO_F103_FLASH_H_
-#define BSP_NUCLEO_F103_FLASH_H_
+#ifndef BSP_SMARTSINK_FLASH_H_
+#define BSP_SMARTSINK_FLASH_H_
 
 #include "bsp/bsp.h"
 
@@ -122,4 +122,4 @@ bspStatus_t bspFlashErasePage(uint32_t addr);
   */
 bspStatus_t bspFlashWaitForLastOperation(uint32_t timeout);
 
-#endif /* BSP_NUCLEO_F103_FLASH_H_ */
+#endif /* BSP_SMARTSINK_FLASH_H_ */

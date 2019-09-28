@@ -79,6 +79,15 @@ void bspGpioInit(void)
 
     init.Mode = LL_GPIO_MODE_FLOATING;
     bspGpioPinInit(BSP_GPIO_TTY_RX, &init);
+
+	/* ADC */
+	init.Mode = LL_GPIO_MODE_ANALOG;
+   bspGpioPinInit(BSP_GPIO_LIPO_CELL1, &init);
+	bspGpioPinInit(BSP_GPIO_LIPO_CELL2, &init);
+	bspGpioPinInit(BSP_GPIO_LIPO_CELL3, &init);
+	bspGpioPinInit(BSP_GPIO_LIPO_CELL4, &init);
+	bspGpioPinInit(BSP_GPIO_LIPO_CELL5, &init);
+	bspGpioPinInit(BSP_GPIO_LIPO_CELL6, &init);
 }
 
 void bspGpioSet(bspGpioPin_t pin)

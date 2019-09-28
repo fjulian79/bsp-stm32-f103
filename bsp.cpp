@@ -20,7 +20,6 @@
  * You can file issues at https://github.com/fjulian79/bsp-smartsink
  */
 
-
 #include <stm32f1xx_ll_rcc.h>
 #include <stm32f1xx_ll_system.h>
 #include <stm32f1xx_ll_utils.h>
@@ -29,6 +28,7 @@
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
+#include "bsp/bsp_adc.h"
 
 #if BSP_SYSTICK == BSP_ENABLED
 
@@ -111,9 +111,14 @@ static inline void bspClockInit(void)
 
 #endif /* BSP_SYSTICK == BSP_ENABLED */
 
-    /* DMA is used for the tty etc. */
+    /* DMA is used for the tty, adc, etc. */
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
 
+    /* Enable ADC clock */
+    LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSRC_PCLK2_DIV_6);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
+
+    /* Enable USART clock */
     TTY_USARTx_CLK_ENABLE();
 }
 
@@ -127,5 +132,7 @@ void bspChipInit(void)
 
     /* Configure the tty */
     bspTTYInit(BSP_TTY_BAUDRATE);
+
+    bspAdcInit();
 }
 

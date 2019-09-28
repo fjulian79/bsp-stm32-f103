@@ -32,13 +32,61 @@
 /**
  * Special GPIO Pin definitions
  */
+#ifndef BSP_GPIO_A0
+#define BSP_GPIO_A0                         BSP_GPIO_LIPO_CELL1
+#endif
+
+#ifndef BSP_GPIO_A1
+#define BSP_GPIO_A1                         BSP_GPIO_LIPO_CELL2
+#endif
+
+#ifndef BSP_GPIO_A4
+#define BSP_GPIO_A4                         BSP_GPIO_LIPO_CELL3
+#endif
+
 #ifndef BSP_GPIO_A5
 #define BSP_GPIO_A5                         BSP_GPIO_LED
+#endif
+
+#ifndef BSP_GPIO_B0
+#define BSP_GPIO_B0                         BSP_GPIO_LIPO_CELL4
+#endif
+
+#ifndef BSP_GPIO_C0
+#define BSP_GPIO_C0                         BSP_GPIO_LIPO_CELL6
+#endif
+
+#ifndef BSP_GPIO_C1
+#define BSP_GPIO_C1                         BSP_GPIO_LIPO_CELL5
 #endif
 
 #ifndef BSP_GPIO_C13
 #define BSP_GPIO_C13                        BSP_GPIO_BUTTON
 #endif
+
+/**
+ * ADC configuration
+ */
+
+#define BSP_ADC_SAMPLETIME                  LL_ADC_SAMPLINGTIME_41CYCLES_5
+
+#define BSP_ADC_CH_LIPO1                    LL_ADC_CHANNEL_0
+#define BSP_ADC_CH_LIPO2                    LL_ADC_CHANNEL_1
+#define BSP_ADC_CH_LIPO3                    LL_ADC_CHANNEL_4
+#define BSP_ADC_CH_LIPO4                    LL_ADC_CHANNEL_8
+#define BSP_ADC_CH_LIPO5                    LL_ADC_CHANNEL_11
+#define BSP_ADC_CH_LIPO6                    LL_ADC_CHANNEL_10
+
+#define BSP_ADC_LIPOCELLS                   6
+
+/* Hence that the DMA channel to use is hard coded by ST.
+ * See DMA channel assignment table below. */
+#define BSP_ADC_DMACH                       DMA1_Channel1
+#define BSP_ADC_DMACH_IRQn                  DMA1_Channel1_IRQn
+#define BSP_ADC_DMACH_IRQHandler            DMA1_Channel1_IRQHandler
+#define BSP_ADC_DMACH_LLCH                  LL_DMA_CHANNEL_1
+#define BSP_ADC_DMACH_ISACTIVEFLAG_TC()     LL_DMA_IsActiveFlag_TC1(DMA1)
+#define BSP_ADC_DMACH_CLEARFLAG_TC()        LL_DMA_ClearFlag_TC1(DMA1)
 
 /**
  * TTY configuration

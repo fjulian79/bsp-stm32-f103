@@ -49,27 +49,31 @@ const uint8_t bspAdcDen[BSP_ADC_LIPOCELLS] =
         {15, 10, 12, 10, 8, 16};
 
 /**
- * The buffer used for theDMA transfers;
+ * The buffer used for the DMA transfers;
  */
 volatile uint16_t bspAdcDmaBuffer[BSP_ADC_LIPOCELLS];
+
+/**
+ * Data structure used for storing raw accumulated adc values and the number 
+ * of contributing samples 
+ */
+typedef struct
+{
+    uint32_t Samples;
+    uint32_t Data[BSP_ADC_LIPOCELLS];
+
+} bspAdcRawData_t;
 
 /**
  * The Global ADC data structure
  */
 struct 
 {
-    uint32_t Temp[BSP_ADC_LIPOCELLS];
-    uint32_t SampleCnt;
+    bspAdcRawData_t Accu;
+    bspAdcRawData_t Result;
 
     uint32_t LastTick;
     uint32_t SampleTicks;
-
-    struct 
-    {
-        uint32_t Samples;
-        uint32_t mV[BSP_ADC_LIPOCELLS];
-        
-    }Result;
 
 } bspAdcData;
 
@@ -85,28 +89,21 @@ extern "C" void BSP_ADC_DMACH_IRQHandler(void)
         BSP_ADC_DMACH_CLEARFLAG_TC();
 
         sysTick = bspGetSysTick();
-        bspAdcData.SampleCnt++;
+        bspAdcData.Accu.Samples++;
 
         for(uint8_t pos = 0; pos < BSP_ADC_LIPOCELLS; pos++)
         {
-            bspAdcData.Temp[pos] += bspAdcDmaBuffer[pos];
+            bspAdcData.Accu.Data[pos] += bspAdcDmaBuffer[pos];
         }
 
         if(sysTick - bspAdcData.LastTick > bspAdcData.SampleTicks)
         {   
             bspAdcData.LastTick = sysTick;
 
-            for(uint8_t pos = 0; pos < BSP_ADC_LIPOCELLS; pos++)
-            {
-                bspAdcData.Temp[pos] /= bspAdcData.SampleCnt;
-                bspAdcData.Result.mV[pos] = 
-                    (bspAdcData.Temp[pos] * bspAdcNum[pos]) >> bspAdcDen[pos];
-            }
+            bspAdcData.Result.Samples = bspAdcData.Accu.Samples;
 
-            bspAdcData.Result.Samples = bspAdcData.SampleCnt;
-
-            memset((void*)bspAdcData.Temp, 0, sizeof(bspAdcData.Temp));
-            bspAdcData.SampleCnt = 0;
+            memcpy((void*)&bspAdcData.Result, (void*)&bspAdcData.Accu, sizeof(bspAdcRawData_t));
+            memset((void*)&bspAdcData.Accu, 0, sizeof(bspAdcRawData_t));
         }
 
         LL_ADC_REG_StartConversionSWStart(ADC1);
@@ -229,10 +226,19 @@ uint32_t  bspAdcGetResult(uint32_t *pDat)
 {
     uint32_t samples = 0;
 
+    /* Copy the data in a critical section, process it later */
     NVIC_DisableIRQ(BSP_ADC_DMACH_IRQn);
-    memcpy(pDat, bspAdcData.Result.mV, sizeof(bspAdcData.Result.mV));
+    memcpy(pDat, bspAdcData.Result.Data, sizeof(bspAdcData.Result.Data));
     samples = bspAdcData.Result.Samples;
     NVIC_EnableIRQ(BSP_ADC_DMACH_IRQn);
+
+    for(uint8_t pos = 0; pos < BSP_ADC_LIPOCELLS; pos++)
+    {
+        /* the data my contain of several samples, normalize it */
+        pDat[pos] /= samples;
+        /* convert to mv */
+        pDat[pos] = (pDat[pos] * bspAdcNum[pos]) >> bspAdcDen[pos];
+    }
 
     return samples;
 }

@@ -47,8 +47,11 @@ void bspAdcInit(void);
  *
  * Note: This will not clear existing results.
  * 
- * @param sampleTicks   Numnber of SysTicks to sample the ADC chanel before a
- *                      result will be calculated.
+ * @param ticks     Numnber of SysTicks to sample the ADC chanel before a
+ *                  result will be calculated.
+ * 
+ * @return bspStatus_t  BSP_OK      in case of sucess.
+ *                      BSP_EEINVAL in case of a invalid argument.
  */
 bspStatus_t bspAdcSetSampleTicks(uint32_t ticks);
 
@@ -62,7 +65,7 @@ void bspAdcResetResults(void);
 /**
  * @brief Used to get the result of the last measurements
  * 
- * @param pData      Point to a arry large enought to take the results.
+ * @param pData     Pointer to a arry large enought to take the results.
  * 
  * @return uint32_t  The number of ADC samples contributed to the results. 
  */

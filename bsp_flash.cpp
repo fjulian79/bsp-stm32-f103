@@ -113,6 +113,22 @@ bspStatus_t bspFlashLock(void)
     return BSP_OK;
 }
 
+uint16_t* bspGetPageAddr(uint16_t num)
+{
+    uint16_t *addr = BSP_FLASH_BASE;
+
+    if (num < BSP_FLASH_NUMPAGES)
+    {
+        addr += num * BSP_FLASH_PAGESIZE;
+    }
+    else
+    {
+        addr = 0;
+    }
+        
+    return addr;
+}
+
 bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data)
 {
     if (HAL_IS_BIT_SET(FLASH->CR, FLASH_CR_LOCK))

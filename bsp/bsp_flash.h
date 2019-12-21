@@ -10,7 +10,20 @@
 
 #include "bsp/bsp.h"
 
-#define BSP_FLASH_NUMPAGES      ((FLASH_BANK1_END-FLASH_BASE+1)/FLASH_PAGE_SIZE)
+/**
+ * @brief Defines the base address of the on board flash.
+ */
+#define BSP_FLASH_BASE          FLASH_BASE
+
+/**
+ * @brief Defines the size of a single flash page.
+ */
+#define BSP_FLASH_PAGESIZE      FLASH_PAGE_SIZE
+
+/**
+ * @brief Defines the number of flash pages on the used device.
+ */
+#define BSP_FLASH_NUMPAGES      ((FLASH_BANK1_END - BSP_FLASH_BASE + 1) / FLASH_PAGE_SIZE)
 
 /**
  * @brief The Flash error reasons. 
@@ -45,6 +58,16 @@ bspStatus_t bspFlashUnlock(void);
 bspStatus_t bspFlashLock(void);
 
 /**
+  * @brief Used to get the page address by the page number.
+  * 
+  * @param num a page number.
+  * 
+  * @retval zero   In case of a invalid page number.
+  *         Base address of the given page.
+  */
+uint16_t* bspGetPageAddr(uint16_t num);
+
+/**
   * @brief  Program a half-word (16-bit) at a specified address.
   * 
   * @param  Address specify the address to be programmed.
@@ -75,7 +98,6 @@ bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data);
   *                     See bspFlashGetErr in that case.
   */
 bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz);
-
 
 /**
   * @brief  Erase the specified FLASH memory page

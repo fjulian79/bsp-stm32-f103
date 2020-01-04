@@ -29,14 +29,20 @@
 /**
  * @brief Used to get the Page number of the given address.
  */
-#define BSP_FLASH_ADDRTONUM(_addr)      \
-      (size_t)(((uint32_t)_addr - BSP_FLASH_BASE) / FLASH_PAGE_SIZE)
+#define BSP_FLASH_ADDRTOPAGE(_addr)      \
+      (((uint32_t)_addr - BSP_FLASH_BASE) / FLASH_PAGE_SIZE)
+
+/**
+ * @brief Used to get the offset in the page of the given address.
+ */
+#define BSP_FLASH_ADDRTOPAGEOFFS(_addr)      \
+      (((uint32_t)_addr - BSP_FLASH_BASE) % FLASH_PAGE_SIZE)
 
 /**
  * @brief Used to get the page address based on the given page number.
  */
-#define BSP_FLASH_NUMTOADDR(_num)       \
-      (BSP_FLASH_BASE + (_num * FLASH_PAGE_SIZE))
+#define BSP_FLASH_PAGETOADDR(_num)       \
+      ((uint16_t*)(BSP_FLASH_BASE + (_num * FLASH_PAGE_SIZE)))
 
 /**
  * @brief The Flash error reasons. 

@@ -132,27 +132,34 @@ extern "C" int _write(int file, char *pData, int siz)
     int tmp = 0;
     uint8_t *ptr = NULL;
 
-    NVIC_DisableIRQ(TTY_TXDMACH_IRQn);
-
-    if (siz == 1)
-        tmp = pTxFifo->put(pData);
-    else
-        tmp = pTxFifo->write(pData, siz);
-
-    if (ttyTxData.TxBytes == 0)
+    do
     {
-        ttyTxData.TxBytes = pTxFifo->getReadBlock((void**)&ptr);
-        startDmaTx(ptr, ttyTxData.TxBytes);
-    }
+        NVIC_DisableIRQ(TTY_TXDMACH_IRQn);
 
-    NVIC_EnableIRQ(TTY_TXDMACH_IRQn);
+        if ((siz - tmp) == 1)
+            tmp += pTxFifo->put(pData + tmp);
+        else
+            tmp += pTxFifo->write(pData + tmp, (siz - tmp));
+
+        if (ttyTxData.TxBytes == 0)
+        {
+            ttyTxData.TxBytes = pTxFifo->getReadBlock((void**)&ptr);
+            startDmaTx(ptr, ttyTxData.TxBytes);
+        }
+
+        NVIC_EnableIRQ(TTY_TXDMACH_IRQn);
 
 #if BSP_TTY_BLOCKING == BSP_ENABLED
 
-    while (pTxFifo->getFree() == 0 && (tmp < siz));
+        while (pTxFifo->getFree() == 0 && (tmp < siz));
+
+    } while (tmp < siz);
+    
     return tmp;
 
 #else /* BSP_TTY_BLOCKING == BSP_ENABLED */
+
+    } while (0);
 
     unused(tmp);
     return siz;

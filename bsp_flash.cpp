@@ -113,22 +113,6 @@ bspStatus_t bspFlashLock(void)
     return BSP_OK;
 }
 
-uint16_t* bspGetPageAddr(uint16_t num)
-{
-    uint16_t *addr = BSP_FLASH_BASE;
-
-    if (num < BSP_FLASH_NUMPAGES)
-    {
-        addr += num * BSP_FLASH_PAGESIZE;
-    }
-    else
-    {
-        addr = 0;
-    }
-        
-    return addr;
-}
-
 bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data)
 {
     if (HAL_IS_BIT_SET(FLASH->CR, FLASH_CR_LOCK))
@@ -147,7 +131,7 @@ bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data)
     return bspFlashWaitForLastOperation(BSP_FLASH_TIMEOUT);
 }
 
-bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz)
+bspStatus_t bspFlashProg(uint16_t *addr, void *pData, size_t siz)
 {
     bspStatus_t ret = BSP_OK;
 
@@ -163,11 +147,18 @@ bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz)
     if (siz%2 != 0)
         return BSP_ESIZE;
 
+    /* The size argument is expected to be byte based. But can only write 16 Bit
+     * at once. Previously there is a check if the given size is a even number, 
+     * so we can dive the given size now savely by two as preparation for 
+     * programming halve words. 
+     * */
+    siz = siz/2;
+
     BSP_FLASH_SETMODE(FLASH_CR_PG);
-    
+
     for(size_t i = 0; i < siz; i++)
     {
-        *(__IO uint16_t*)&addr[i] = pData[i];
+        ((__IO uint16_t*)addr)[i] = ((uint16_t*)pData)[i];
         ret = bspFlashWaitForLastOperation(BSP_FLASH_TIMEOUT);
         if (ret  != BSP_OK)
             break;
@@ -176,7 +167,7 @@ bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz)
     return ret;
 }
 
-bspStatus_t bspFlashErasePage(uint32_t addr)
+bspStatus_t bspFlashErasePage(uint16_t *addr)
 {
     if (HAL_IS_BIT_SET(FLASH->CR, FLASH_CR_LOCK))
         return BSP_ELOCK;
@@ -186,7 +177,7 @@ bspStatus_t bspFlashErasePage(uint32_t addr)
 
     BSP_FLASH_SETMODE(FLASH_CR_PER);
 
-    WRITE_REG(FLASH->AR, addr);
+    WRITE_REG(FLASH->AR, ((uint32_t)addr));
     SET_BIT(FLASH->CR, FLASH_CR_STRT);
 
     return bspFlashWaitForLastOperation(BSP_FLASH_TIMEOUT);

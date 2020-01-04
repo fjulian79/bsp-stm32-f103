@@ -23,7 +23,20 @@
 /**
  * @brief Defines the number of flash pages on the used device.
  */
-#define BSP_FLASH_NUMPAGES      ((FLASH_BANK1_END - BSP_FLASH_BASE + 1) / FLASH_PAGE_SIZE)
+#define BSP_FLASH_NUMPAGES      \
+      ((FLASH_BANK1_END - BSP_FLASH_BASE + 1) / FLASH_PAGE_SIZE)
+
+/**
+ * @brief Used to get the Page number of the given address.
+ */
+#define BSP_FLASH_ADDRTONUM(_addr)      \
+      (size_t)(((uint32_t)_addr - BSP_FLASH_BASE) / FLASH_PAGE_SIZE)
+
+/**
+ * @brief Used to get the page address based on the given page number.
+ */
+#define BSP_FLASH_NUMTOADDR(_num)       \
+      (BSP_FLASH_BASE + (_num * FLASH_PAGE_SIZE))
 
 /**
  * @brief The Flash error reasons. 
@@ -58,16 +71,6 @@ bspStatus_t bspFlashUnlock(void);
 bspStatus_t bspFlashLock(void);
 
 /**
-  * @brief Used to get the page address by the page number.
-  * 
-  * @param num a page number.
-  * 
-  * @retval zero   In case of a invalid page number.
-  *         Base address of the given page.
-  */
-uint16_t* bspGetPageAddr(uint16_t num);
-
-/**
   * @brief  Program a half-word (16-bit) at a specified address.
   * 
   * @param  Address specify the address to be programmed.
@@ -85,9 +88,14 @@ bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data);
 /**
   * @brief  Program a half-word (16-bit) at a specified address.
   * 
+  * The on chip flash memory can be only be programmed 16 bits (half words) at a 
+  * time. As consequence this function expects a even number of BYTES as size 
+  * arguemnt. See chapter 3.3.3 in the STM32F10xxx_ReferenceManual.pdf for more 
+  * infos on writing to the on chip flash memeory.‚
+  * 
   * @param  Address   specify the address to be programmed.
   * @param  Data      specify the data to be programmed.
-  * @param  siz       The number of bytes to program, must be even!
+  * @param  siz       The number of BYTES to program, must be even!
   * 
   * @retval BSP_OK      In case of success.
   *         BSP_ELOCK   If the flash is locked.
@@ -97,7 +105,7 @@ bspStatus_t bspFlashProgHalfWord(uint16_t *addr, uint16_t data);
   *         BSP_ERR     In case of a error while writing to the flash.
   *                     See bspFlashGetErr in that case.
   */
-bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz);
+bspStatus_t bspFlashProg(uint16_t *addr, void *pData, size_t siz);
 
 /**
   * @brief  Erase the specified FLASH memory page
@@ -110,7 +118,7 @@ bspStatus_t bspFlashProg(uint16_t *addr, uint16_t *pData, size_t siz);
   *         BSP_ERR     In case of a error while writing to the flash.
   *                     See bspFlashGetErr in that case.
   */
-bspStatus_t bspFlashErasePage(uint32_t addr);
+bspStatus_t bspFlashErasePage(uint16_t *addr);
 
 /**
   * @brief  Wait for a FLASH operation to complete.

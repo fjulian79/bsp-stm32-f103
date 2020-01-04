@@ -136,7 +136,7 @@
  */
 typedef enum
 {
-      BSP_OK,               ///<! In case of success
+      BSP_OK = 0,           ///<! In case of success
       BSP_IDLE,             ///<! Recourse idle
       BSP_ERR,              ///<! Unspecified error
       BSP_EBUSY,            ///<! Recourse busy

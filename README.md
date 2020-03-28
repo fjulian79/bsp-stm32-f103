@@ -1,7 +1,9 @@
 # bsp-stm32-f103
-The board support package for all my stm32 f103 based projects. It is based on the STM32 f103rb nucleo eval board. 
+A board support package for stm32 nucleo f103 based projects.
 
-The master is intended to provide only common things. If something specific to a derived PCB has to be implemented, this has to be done on a branch. Currently there are the following braches:
+The master is intended to provide only common things. 
+If something specific to a derived PCB has to be implemented, this has to be done on a branch. 
+Currently there are the following branches:
 
 | Branch        | Description |
 | ------------- |-------------|

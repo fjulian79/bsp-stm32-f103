@@ -1,0 +1,17 @@
+{
+    "name": "bsp-nucleo-f103",
+    "version": "1.2.13",
+    "keywords": "",
+    "description": "A board support package for stm32 nucleo f103 based projects.",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/fjulian79/libgeneric.git"
+    },
+    "frameworks": "*",
+    "platforms": "*",
+    "dependencies": 
+    {
+      "libgeneric": "https://github.com/fjulian79/libgeneric.git#master"
+    }
+}

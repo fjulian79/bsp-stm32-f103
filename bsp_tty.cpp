@@ -26,8 +26,8 @@
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
-#include "generic/generic.h"
-#include "generic/fifo.h"
+#include "generic/generic.hpp"
+#include "generic/fifo.hpp"
 
 #include <stdbool.h>
 #include <stdio.h>

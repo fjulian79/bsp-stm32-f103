@@ -52,7 +52,6 @@
 
 /**
  * @brief Derives a bsp internal gpio ID from the given port and pin.
- * 
  */
 #define BSP_IOMAPVAL(_port, _pin)           ((_port << 16) + _pin)
 
@@ -130,44 +129,57 @@ void bspGpioPinInit(bspGpioPin_t pin, LL_GPIO_InitTypeDef *init);
 
 /**
  * @brief Used to initialize gpio pins used by the bsp internally.
+ * 
  * E.g. tty, led, buttons, etc.
  */
 void bspGpioInit(void);
 
 /**
- * @brief Sets the given gpio pin to high.
+ * @brief Sets the given gpio pins to high.
  *
+ * Hence that althow only one pin value can be passed, it is still possible that
+ * more than one pin is specified. See BSP_GPIO_x_ALL for a example.
+ * 
  * @param pin   The bsp gpio pin ID.
  */
 void bspGpioSet(bspGpioPin_t pin);
 
 /**
- * @brief Clears the given gpio pin to high.
+ * @brief Sets the given gpio pin to low.
  * 
- * @param pin   The bsp gpio pin ID.
+ * Hence that althow only one pin value can be passed, it is still possible that
+ * more than one pin is specified. See BSP_GPIO_x_ALL for a example.
+ * 
+ * @param pin
  */
 void bspGpioClear(bspGpioPin_t pin);
 
 /**
- * @brief Sets the given gpio pin to low.
+ * @brief Toggels the given gpio pins.
  *
+ * Hence that althow only one pin value can be passed, it is still possible that
+ * more than one pin is specified. See BSP_GPIO_x_ALL for a example.
+ * 
  * @param pin   The bsp gpio pin ID.
  */
 void bspGpioToggle(bspGpioPin_t pin);
 
 /**
- * @brief Sets the given gpio pin based on the given value.
+ * @brief Sets the given gpio pins based on the given value.
  *
  * @param pin   The bsp gpio pin ID.
- * @param val   If not zero the pin will be set to high.
- *              If zero the pin will become low.
+ * @param val   If true the pins will be set to high.
+ *              If false the pins will become low.
  */
 void bspGpioWrite(bspGpioPin_t pin, uint32_t val);
 
 /**
- * @brief Used to read the given gpio pin.
+ * @brief Used to read the given gpio pins.
+ * 
+ * Hence that althow only one pin value can be passed, it is still possible that
+ * more than one pin is specified. See BSP_GPIO_x_ALL for a example.
  *
- * @param pin   The bsp gpio pin ID.
+ * @param pin   The pins to read. 
  *
  * @return  true    if the pin is high.
  *          false   if the pin is low.

@@ -1,5 +1,5 @@
 /*
- * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
+s * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
  *
  * Copyright (C) 2020 Julian Friedrich
  * 

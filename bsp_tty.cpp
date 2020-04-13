@@ -242,6 +242,7 @@ void bspTTYInit(uint32_t baud)
     ttyTxData.NumLost = 0;
     pTxFifo = new Fifo(ttyTxData.Data, sizeof(ttyTxData.Data));
 
+    LL_DMA_StructInit(&dma);
     dma.Mode = LL_DMA_MODE_NORMAL;
     dma.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;
     dma.Priority = LL_DMA_PRIORITY_HIGH;

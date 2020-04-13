@@ -220,12 +220,8 @@ void bspTTYInit(uint32_t baud)
 {
     LL_USART_InitTypeDef init;
 
+    LL_USART_StructInit(&init);
     init.BaudRate = baud;
-    init.DataWidth = LL_USART_DATAWIDTH_8B;
-    init.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
-    init.Parity = LL_USART_PARITY_NONE;
-    init.StopBits = LL_USART_STOPBITS_1;
-    init.TransferDirection = LL_USART_DIRECTION_TX_RX;
     LL_USART_Init(TTY_USARTx, &init);
 
     LL_USART_Enable(TTY_USARTx);

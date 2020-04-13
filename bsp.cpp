@@ -27,8 +27,9 @@
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
+#include "bsp/bsp_exti.h"
 
-inline bool bspIsInterrupt()
+inline bool bspIsInterrupt(void)
 {
     return (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0 ;
 }
@@ -133,5 +134,12 @@ void bspChipInit(void)
 
     /* Configure the tty */
     bspTTYInit(BSP_TTY_BAUDRATE);
+
+    /* External interrupts (Button)*/
+    bspExtiInit();
 }
 
+void bspResetCpu(void)
+{
+    NVIC_SystemReset();
+}

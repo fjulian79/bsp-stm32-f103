@@ -82,11 +82,6 @@
 #define BSP_TTY_BLOCKING                  BSP_ENABLED
 
 /**
- * @brief Defines the number of PWM steps
- */
-#define BSP_MOTORPWM_MAX                  2048
-
-/**
  * GPIO definitions.
  *
  * The bsp will define all GPIO's within a enumeration type called bspGpioPin_t

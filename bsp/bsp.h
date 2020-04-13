@@ -213,11 +213,16 @@ void bspDelayMs(uint32_t delay);
  * 
  * ATTENTION: Not tested yet!
  */
-bool bspInInterrupt();
+bool bspInInterrupt(void);
 
 /**
  * @brief Used to implement generic chip initialization
  */
 void bspChipInit(void);
+
+/**
+ * @brief used to trigger a CPU reset.
+ */
+void bspResetCpu(void);
 
 #endif /* BSP_NUCLEO_F103_H_ */

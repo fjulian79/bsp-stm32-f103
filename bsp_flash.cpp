@@ -1,8 +1,7 @@
 /*
- * bsp-nucleo-f103, the board support package for the hardware used in the 
- * smartsink project.
+ * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
  *
- * Copyright (C) 2019 Julian Friedrich
+ * Copyright (C) 2020 Julian Friedrich
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
  *
- * You can file issues at https://github.com/fjulian79/bsp-smartsink
+ * You can file issues at https://github.com/fjulian79/bsp-stm32-f103.git
  */
 
 #include "bsp/bsp_flash.h"
 
-#include "stm32f1xx.h"
+#include <stm32f1xx.h>
 #include <stm32f1xx_hal_flash.h>
 
 #include <stdint.h>
@@ -41,14 +40,14 @@
 #define BSP_FLASH_TIMEOUT               1
 
 /**
- * Bitmask of all the flash operation mode bits.
+ * @brief Bitmask of all the flash operation mode bits.
  */
 #define BSP_FLASH_MODEBITS                                      \
                                                                 \
         (FLASH_CR_PG | FLASH_CR_PER | FLASH_CR_MER | FLASH_CR_OPTPG)
 
 /**
- * Needed to make shure to hae only the desired mode bit set.
+ * @brief Needed to make shure to hae only the desired mode bit set.
  */
 #define BSP_FLASH_SETMODE(_mode)                                \
                                                                 \
@@ -59,13 +58,13 @@
         }while(0);
 
 /**
- * Like errno.
+ * @brief Like errno.
  */
 uint32_t bspFlashErr = 0;
 
 /**
- * Used to check the error flags and clean them if needed. Actually it seams as
- * further operations will fail until a set error flag gets cleared. 
+ * @brief Used to check the error flags and clean them if needed. Actually it 
+ * seams as further operations will fail until a set error flag gets cleared. 
  * 
  * In case of a error bspFlashGetErr() will provide the error code.
  * 

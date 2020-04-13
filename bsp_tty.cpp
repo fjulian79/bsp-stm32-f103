@@ -1,8 +1,7 @@
 /*
- * bsp-nucleo-f103, the board support package for the hardware used in the 
- * smartsink project.
+ * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
  *
- * Copyright (C) 2019 Julian Friedrich
+ * Copyright (C) 2020 Julian Friedrich
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
  *
- * You can file issues at https://github.com/fjulian79/bsp-smartsink
+ * You can file issues at https://github.com/fjulian79/bsp-stm32-f103.git
  */
 
 #include <stm32f1xx_ll_usart.h>
@@ -26,6 +25,8 @@
 #include "bsp/bsp.h"
 #include "bsp/bsp_gpio.h"
 #include "bsp/bsp_tty.h"
+#include "bsp/bsp_assert.h"
+
 #include "generic/generic.hpp"
 #include "generic/fifo.hpp"
 
@@ -36,7 +37,7 @@
 #if BSP_TTY_TX_DMA == BSP_ENABLED
 
 /**
- * TTY Data shared with the interrupt.
+ * @brief TTY Data shared with the interrupt.
  */
 struct
 {
@@ -47,12 +48,12 @@ struct
 } ttyTxData;
 
 /**
- * Generic fifo instance operation on ttyData.Data
+ * @brief Generic fifo instance operation on ttyData.Data
  */
 Fifo *pTxFifo;
 
 /**
- * Starts a DMS transfer at the given address with the given length.
+ * @brief Starts a DMS transfer at the given address with the given length.
  *
  * @param pData     Address to start.
  * @param siz       Number of bytes to transfer.
@@ -66,7 +67,7 @@ void startDmaTx(uint8_t *pData, size_t siz)
 }
 
 /**
- * TTY Tx DMA Interrupt handler.
+ * @brief TTY Tx DMA Interrupt handler.
  */
 extern "C" void TTY_TXDMACH_IRQHandler(void)
 {
@@ -87,11 +88,7 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
     }
     else
     {
-        while(1)
-        {
-            bspGpioToggle(BSP_GPIO_LED);
-            LL_mDelay(50);
-        }
+        bspDoAssert();
     }
 }
 
@@ -100,7 +97,7 @@ extern "C" void TTY_TXDMACH_IRQHandler(void)
 #if BSP_TTY_RX_IRQ == BSP_ENABLED
 
 /**
- * TTY Rx data shared with the interrupt.
+ * @brief TTY Rx data shared with the interrupt.
  */
 struct
 {
@@ -110,7 +107,7 @@ struct
 } ttyRxData;
 
 /**
- * Generic fifo instance operation on ttyData.Data
+ * @brief Generic fifo instance operation on ttyData.Data
  */
 Fifo *pRxFifo;
 
@@ -129,7 +126,7 @@ extern "C" void TTY_USARTx_IRQHandler(void)
 #endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
 
 /**
- * Called by c library for printf calls.
+ * @brief Called by c library for printf calls.
  *
  * @param file      The used Stream number.
  * @param pData     The data to write.
@@ -198,7 +195,7 @@ extern "C" int _write(int file, char *pData, int siz)
 }
 
 /**
- * Called by scanf calls to read from the given stream.
+ * @brief Called by scanf calls to read from the given stream.
  *
  * @param file  The stream to read from.
  * @param ptr   The buffer to write to.
@@ -231,7 +228,7 @@ void bspTTYInit(uint32_t baud)
     ttyRxData.NumLost = 0;
     pRxFifo = new Fifo(ttyRxData.Data, sizeof(ttyRxData.Data));
 
-    NVIC_SetPriority(USART2_IRQn, BSP_TTY_USART_IRQ_PRIO);
+    NVIC_SetPriority(USART2_IRQn, BSP_IRQPRIO_TTY);
     NVIC_EnableIRQ(USART2_IRQn);
     LL_USART_EnableIT_RXNE(TTY_USARTx);
 
@@ -255,7 +252,7 @@ void bspTTYInit(uint32_t baud)
     dma.PeriphOrM2MSrcAddress = LL_USART_DMA_GetRegAddr(TTY_USARTx);
     LL_DMA_Init(DMA1, TTY_TXDMACH_LLCH, &dma);
 
-    NVIC_SetPriority(TTY_TXDMACH_IRQn, 0);
+    NVIC_SetPriority(TTY_TXDMACH_IRQn, BSP_IRQPRIO_TTY);
     NVIC_EnableIRQ(TTY_TXDMACH_IRQn);
     LL_DMA_EnableIT_TC(DMA1, TTY_TXDMACH_LLCH);
     LL_DMA_EnableIT_TE(DMA1, TTY_TXDMACH_LLCH);
@@ -303,3 +300,32 @@ char bspTTYGetChar(void)
 
 #endif /* BSP_TTY_RX_IRQ == BSP_ENABLED */
 }
+
+#if BSP_ASSERT_MESSAGE == BSP_ENABLED
+
+void bspTTYAssertMessage(char *pChar)
+{
+#if BSP_TTY_TX_DMA == BSP_ENABLED
+
+    /* If a transfer is ongoing let it complete and disable the DMA once it 
+     * is done */
+    if(LL_DMA_IsEnabledChannel(DMA1, TTY_TXDMACH_LLCH))
+    {
+        while(!TTY_TXDMACH_ISACTIVEFLAG_TC());
+        TTY_TXDMACH_CLEARFLAG_TC();
+        LL_USART_DisableDMAReq_TX(TTY_USARTx);
+        LL_DMA_DisableChannel(DMA1, TTY_TXDMACH_LLCH);
+    }
+
+#endif /* BSP_TTY_TX_DMA == BSP_ENABLED */    
+
+    /* Do use DMA here as interrupts will most likely not work anymore */
+    while (*pChar != 0)
+    {
+        while (!LL_USART_IsActiveFlag_TXE(TTY_USARTx));
+        LL_USART_TransmitData8(TTY_USARTx, *pChar);
+        pChar++;
+    }
+}
+
+#endif /* BSP_ASSERT_MESSAGE == BSP_ENABLED */

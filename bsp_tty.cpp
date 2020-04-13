@@ -1,8 +1,7 @@
 /*
- * bsp-nucleo-f103, the board support package for the hardware used in the 
- * smartsink project.
+ * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
  *
- * Copyright (C) 2019 Julian Friedrich
+ * Copyright (C) 2020 Julian Friedrich
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
  *
- * You can file issues at https://github.com/fjulian79/bsp-smartsink
+ * You can file issues at https://github.com/fjulian79/bsp-stm32-f103.git
  */
 
 #include <stm32f1xx_ll_usart.h>

@@ -1,9 +1,7 @@
 /*
- * bsp-motorctrl, a board support package library for a STM32 based motor 
- * control PCB. It is designed to abstract access to HW features in a generic 
- * and simple way. Please note thet it should not conain any buissness logic.
+ * bsp-nucleo-f103, a generic bsp for nucleo f103rb based projects.
  *
- * Copyright (C) 2019 Julian Friedrich
+ * Copyright (C) 2020 Julian Friedrich
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. 
  *
- * You can file issues at https://github.com/fjulian79/bsp-motorctrl
+ * You can file issues at https://github.com/fjulian79/bsp-stm32-f103.git
  */
 
 #ifndef BSP_MOTORCTRL_EXTI_H_
